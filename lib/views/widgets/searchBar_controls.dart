@@ -28,10 +28,13 @@ class _BarraSearchState extends State<BarraSearch> {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      // This is where the search operation is triggered after the debounce period.
-      // Ensure that the search query is passed correctly to the method responsible
-      // for fetching the data.
-      widget.onSearch(query);
+      if (query.isEmpty) {
+        // Trigger default search when query is empty
+        widget.onSearch(
+            ""); // Pass an empty query or use a specific default query
+      } else {
+        widget.onSearch(query); // Perform search with the entered query
+      }
     });
   }
 
