@@ -23,19 +23,32 @@ class ApiService {
     };
   }
 
-  Future<List<HeroModel>> fetchCharacters() async {
-    final queryParameters = _getAuthQueryParameters();
+  Future<Map<String, dynamic>> fetchCharacters(
+      {int limit = 4, int offset = 0, String query = ''}) async {
+    final Map<String, String> queryParameters = {
+      ..._getAuthQueryParameters(),
+      'limit': limit.toString(),
+      'offset': offset.toString(),
+    };
+
+    if (query.isNotEmpty) {
+      queryParameters.addAll({
+        'nameStartsWith': query
+      }); // Adiciona parâmetro de busca se não estiver vazio
+    }
+
     final uri = Uri.parse("${Constants.apiUrl}/characters")
         .replace(queryParameters: queryParameters);
     final response = await http.get(uri);
 
-    // Parse the JSON data only if the request is successful.
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       final List<dynamic> characters = result['data']['results'];
-      return HeroModel.fromJsonList(characters);
+      return {
+        'heroes': HeroModel.fromJsonList(characters),
+        'result': result,
+      };
     } else {
-      // Throw an exception or handle errors as needed.
       throw Exception('Failed to load characters');
     }
   }

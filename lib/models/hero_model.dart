@@ -19,6 +19,12 @@ class Series {
   static List<Series> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((json) => Series.fromJson(json)).toList();
   }
+
+  @override
+  String toString() {
+    // Retorna uma representação string do objeto Series
+    return name;
+  }
 }
 
 // Representation of a Marvel Event
@@ -37,6 +43,12 @@ class Event {
 
   static List<Event> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((json) => Event.fromJson(json)).toList();
+  }
+
+  @override
+  String toString() {
+    // Retorna uma representação string do objeto Series
+    return name;
   }
 }
 
