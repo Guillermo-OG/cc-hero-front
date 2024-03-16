@@ -24,12 +24,19 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> fetchCharacters(
-      {int limit = 4, int offset = 0}) async {
-    final queryParameters = {
+      {int limit = 4, int offset = 0, String query = ''}) async {
+    final Map<String, String> queryParameters = {
       ..._getAuthQueryParameters(),
       'limit': limit.toString(),
       'offset': offset.toString(),
     };
+
+    if (query.isNotEmpty) {
+      queryParameters.addAll({
+        'nameStartsWith': query
+      }); // Adiciona parâmetro de busca se não estiver vazio
+    }
+
     final uri = Uri.parse("${Constants.apiUrl}/characters")
         .replace(queryParameters: queryParameters);
     final response = await http.get(uri);

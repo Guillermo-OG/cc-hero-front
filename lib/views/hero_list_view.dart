@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/hero_list_view_model.dart';
 import 'widgets/pagination_controls.dart';
-// Importe o novo widget HeroTableTile aqui, se necessário
+import 'widgets/searchBar_controls.dart';
 
 class HeroListView extends StatefulWidget {
   const HeroListView({super.key});
@@ -21,12 +21,12 @@ class _HeroListViewState extends State<HeroListView> {
     final viewModel = Provider.of<HeroListViewModel>(context, listen: false);
     viewModel.fetchHeroes();
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        viewModel.fetchHeroes(nextPage: true);
-      }
-    });
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.pixels ==
+    //       _scrollController.position.maxScrollExtent) {
+    //     viewModel.fetchHeroes(nextPage: true);
+    //   }
+    // });
   }
 
   @override
@@ -53,18 +53,21 @@ class _HeroListViewState extends State<HeroListView> {
       ),
       body: Consumer<HeroListViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.heroes.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            return Column(
-              children: [
+          bool hasResults = viewModel.heroes.isNotEmpty;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: BarraSearch(onSearch: viewModel.onSearch),
+              ),
+              if (hasResults) ...[
                 Expanded(
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     child: DataTable(
                       columns: const [
                         DataColumn(label: Text('Personagem')),
-                        // DataColumn(label: Text('Descrição')),
                         DataColumn(label: Text('Séries')),
                         DataColumn(label: Text('Eventos')),
                       ],
@@ -87,16 +90,8 @@ class _HeroListViewState extends State<HeroListView> {
                                                 color: Color(0xFF4E4E4E)))),
                                   ],
                                 )),
-                                DataCell(Text(hero.series.join(', '),
-                                    style: const TextStyle(
-                                        fontSize: 21,
-                                        fontFamily: 'Roboto-Regular',
-                                        color: Color(0xFF4E4E4E)))),
-                                DataCell(Text(hero.events.join(', '),
-                                    style: const TextStyle(
-                                        fontSize: 21,
-                                        fontFamily: 'Roboto-Regular',
-                                        color: Color(0xFF4E4E4E)))),
+                                DataCell(Text(hero.series.join(', '))),
+                                DataCell(Text(hero.events.join(', '))),
                               ]))
                           .toList(),
                     ),
@@ -108,9 +103,19 @@ class _HeroListViewState extends State<HeroListView> {
                   onPrevPage: viewModel.onPrevPage,
                   onNextPage: viewModel.onNextPage,
                 ),
-              ],
-            );
-          }
+              ] else ...[
+                const Expanded(
+                  child: Center(
+                    child: Text('Nenhum resultado encontrado.',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Roboto-Regular',
+                            color: Color(0xFF4E4E4E))),
+                  ),
+                ),
+              ]
+            ],
+          );
         },
       ),
     );

@@ -18,7 +18,7 @@ class HeroListViewModel with ChangeNotifier {
   /// Fetches characters from the Marvel API and updates the _heroes list.
   /// Notifies listeners upon successful data fetch to update the UI accordingly.
   ///
-  final int _currentPage = 0;
+  // final int _currentPage = 0;
   bool _isFetching = false;
 
   PaginationState get paginationState => _paginationState;
@@ -26,22 +26,30 @@ class HeroListViewModel with ChangeNotifier {
   Future<void> fetchHeroes({bool nextPage = false}) async {
     if (_isFetching) return;
 
-    if (nextPage) _paginationState.currentPage++;
-
     _isFetching = true;
     try {
       final data = await _apiService.fetchCharacters(
         limit: _paginationState.itemsPerPage,
         offset:
             (_paginationState.currentPage - 1) * _paginationState.itemsPerPage,
+        query: _paginationState.searchQuery,
       );
       final heroes = data['heroes'];
-      final result = data['result']; // Extract result here
+      final result = data['result'];
 
-      _heroes.addAll(heroes);
+      if (!nextPage) {
+        _heroes.clear(); // Limpa a lista se não for paginação
+      }
 
-      // Update totalPages after fetching data
-      _paginationState.totalPages = calculateTotalPages(result);
+      if (heroes.isNotEmpty) {
+        _heroes.addAll(heroes);
+        // Atualiza o estado da paginação
+        _paginationState.totalPages = calculateTotalPages(result);
+      } else if (!nextPage) {
+        // Tratamento específico para quando a busca não retorna resultados
+        // e não estamos tentando buscar a próxima página.
+        _paginationState.totalPages = 0;
+      }
 
       notifyListeners();
     } catch (e) {
@@ -71,8 +79,14 @@ class HeroListViewModel with ChangeNotifier {
   }
 
   void onSearch(String input) {
+    if (input.isEmpty) {
+      // Opcional: Decide si quieres restablecer la vista cuando no hay búsqueda.
+      return;
+    }
     _paginationState.searchQuery = input;
     _paginationState.currentPage = 1;
+    _heroes
+        .clear(); // Asegúrate de limpiar la lista actual antes de cargar nuevos resultados.
     fetchHeroes();
   }
 
