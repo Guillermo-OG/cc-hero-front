@@ -1,6 +1,7 @@
 // Importações necessárias
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../styles.dart';
 import '../view_models/hero_list_view_model.dart';
 import 'widgets/pagination_controls.dart';
 import 'widgets/searchBar_controls.dart';
@@ -33,23 +34,62 @@ class _HeroListViewState extends State<HeroListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BUSCA MARVEL TESTE FRONT-END',
-            style: TextStyle(
-                color: Colors.white, fontSize: 27, fontFamily: 'Roboto-Black')),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text("NOME DO CANDIDATO",
-                  style: TextStyle(
-                      fontSize: 21,
-                      fontFamily: 'Roboto-Regular',
-                      color: Color(0xFF4E4E4E))),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RichText(
+              text: TextSpan(
+                children: [
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment
+                        .middle, // Ajusta o alinhamento vertical
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Color(0xFFD42026),
+                            width: 4,
+                          ),
+                        ),
+                      ),
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Text(
+                          'BUS',
+                          style: ResponsiveStyles.titleTextStyle(context),
+                        ),
+                      ), // Reduz o espaçamento do sublinhado
+                    ),
+                  ),
+                  TextSpan(
+                      text: 'CA MARVEL ',
+                      style: ResponsiveStyles.titleTextStyle(context)),
+                  TextSpan(
+                      text: 'TESTE FRONT-END',
+                      style: ResponsiveStyles.subtitleTextStyle(context)),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Visibility(
+            visible: MediaQuery.of(context).size.width >
+                600, // Esconde o texto em dispositivos móveis
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "GUILLERMO OPORTO GUMUCIO",
+                  style: ResponsiveStyles.subtitleTextStyle(context),
+                ),
+              ),
             ),
           ),
         ],
-        backgroundColor: const Color(0xFFD42026),
+        backgroundColor: Colors.white,
       ),
       body: Consumer<HeroListViewModel>(
         builder: (context, viewModel, child) {
@@ -66,10 +106,19 @@ class _HeroListViewState extends State<HeroListView> {
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text('Personagem')),
-                        DataColumn(label: Text('Séries')),
-                        DataColumn(label: Text('Eventos')),
+                      columns: [
+                        DataColumn(
+                            label: Text('Personagem',
+                                style:
+                                    ResponsiveStyles.tableTextStyle(context))),
+                        DataColumn(
+                            label: Text('Séries',
+                                style:
+                                    ResponsiveStyles.tableTextStyle(context))),
+                        DataColumn(
+                            label: Text('Eventos',
+                                style:
+                                    ResponsiveStyles.tableTextStyle(context))),
                       ],
                       rows: viewModel.heroes
                           .map<DataRow>((hero) => DataRow(cells: [
@@ -84,14 +133,17 @@ class _HeroListViewState extends State<HeroListView> {
                                     const SizedBox(width: 8),
                                     Expanded(
                                         child: Text(hero.name,
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: 'Roboto-Regular',
-                                                color: Color(0xFF4E4E4E)))),
+                                            style:
+                                                ResponsiveStyles.tableTextStyle(
+                                                    context))),
                                   ],
                                 )),
-                                DataCell(Text(hero.series.join(', '))),
-                                DataCell(Text(hero.events.join(', '))),
+                                DataCell(Text(hero.series.join(', '),
+                                    style: ResponsiveStyles.tableTextStyle(
+                                        context))),
+                                DataCell(Text(hero.events.join(', '),
+                                    style: ResponsiveStyles.tableTextStyle(
+                                        context))),
                               ]))
                           .toList(),
                     ),
