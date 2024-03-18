@@ -7,35 +7,34 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Container(
-        // Usamos Container para controlar melhor o layout e o alinhamento
-        alignment: Alignment.centerLeft, // Alinha o conteúdo à esquerda
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // Alinha os filhos à esquerda
-          children: [
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                      text: 'BUSCA MARVEL ',
-                      style: ResponsiveStyles.titleTextStyle(context)),
-                  TextSpan(
-                      text: 'TESTE FRONT-END',
-                      style: ResponsiveStyles.subtitleTextStyle(context)),
-                ],
+      title: Padding(
+          padding: const EdgeInsets.all(27.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Alinha os filhos à esquerda
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: 'BUSCA MARVEL ',
+                        style: ResponsiveStyles.titleTextStyle(context)),
+                    TextSpan(
+                        text: 'TESTE FRONT-END',
+                        style: ResponsiveStyles.subtitleTextStyle(context)),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 8), // Espaço entre o texto e a linha
-            Container(
-              width: 54, // Largura da linha
-              height: 4, // Altura da linha
-              color: const Color(0xFFD42026), // Cor da linha
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: 8), // Espaço entre o texto e a linha
+              Container(
+                width: 54, // Largura da linha
+                height: 4, // Altura da linha
+                color: const Color(0xFFD42026), // Cor da linha
+              ),
+            ],
+          )),
+
       actions: [
         Visibility(
           visible: MediaQuery.of(context).size.width > 600,

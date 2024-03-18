@@ -72,6 +72,11 @@ class ResponsiveStyles {
         : const EdgeInsets.only(bottom: 34, left: 30, right: 30);
   }
 
+  static double sizeMainHeader(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    return width > 600 ? width * 0.25 : width;
+  }
+
   static EdgeInsets paginationControlsMargin(BuildContext context) {
     return MediaQuery.of(context).size.width > 600
         ? const EdgeInsets.only(bottom: 16)

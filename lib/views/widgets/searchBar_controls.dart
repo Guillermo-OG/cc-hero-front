@@ -42,7 +42,7 @@ class _BarraSearchState extends State<BarraSearch> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          bottom: 34), // Ajuste o espaçamento conforme necessário
+          bottom: 34, left: 42), // Ajuste o espaçamento conforme necessário
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.start, // Alinha o label à esquerda
