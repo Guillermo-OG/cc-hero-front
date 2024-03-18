@@ -1,8 +1,10 @@
 // Importações necessárias
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import '../styles.dart';
 import '../view_models/hero_list_view_model.dart';
+import 'widgets/custom_appbar.dart';
 import 'widgets/pagination_controls.dart';
 import 'widgets/searchBar_controls.dart';
 
@@ -33,64 +35,7 @@ class _HeroListViewState extends State<HeroListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RichText(
-              text: TextSpan(
-                children: [
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment
-                        .middle, // Ajusta o alinhamento vertical
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Color(0xFFD42026),
-                            width: 4,
-                          ),
-                        ),
-                      ),
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(
-                          'BUS',
-                          style: ResponsiveStyles.titleTextStyle(context),
-                        ),
-                      ), // Reduz o espaçamento do sublinhado
-                    ),
-                  ),
-                  TextSpan(
-                      text: 'CA MARVEL ',
-                      style: ResponsiveStyles.titleTextStyle(context)),
-                  TextSpan(
-                      text: 'TESTE FRONT-END',
-                      style: ResponsiveStyles.subtitleTextStyle(context)),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          Visibility(
-            visible: MediaQuery.of(context).size.width >
-                600, // Esconde o texto em dispositivos móveis
-            child: Padding(
-              padding: const EdgeInsets.only(right: 20.0),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "GUILLERMO OPORTO GUMUCIO",
-                  style: ResponsiveStyles.subtitleTextStyle(context),
-                ),
-              ),
-            ),
-          ),
-        ],
-        backgroundColor: Colors.white,
-      ),
+      appBar: const CustomAppBar(),
       body: Consumer<HeroListViewModel>(
         builder: (context, viewModel, child) {
           bool hasResults = viewModel.heroes.isNotEmpty;
@@ -103,50 +48,90 @@ class _HeroListViewState extends State<HeroListView> {
               ),
               if (hasResults) ...[
                 Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    child: DataTable(
-                      columns: [
+                  child: DataTable(
+                    dataRowHeight: 120,
+                    headingRowHeight: ResponsiveStyles.tableHeaderHeight,
+                    columns: [
+                      DataColumn(
+                        label: Container(
+                          width: ResponsiveStyles.sizeMainHeader(
+                              context), // Ajusta este valor según necesites
+                          decoration: ResponsiveStyles.tableHeaderDecoration,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          child: Text('Personagem',
+                              textAlign: TextAlign.left,
+                              style: ResponsiveStyles.tableHeaderTextStyle(
+                                  context)),
+                        ),
+                      ),
+                      if (MediaQuery.of(context).size.width >= 600) ...[
                         DataColumn(
-                            label: Text('Personagem',
-                                style:
-                                    ResponsiveStyles.tableTextStyle(context))),
+                          label: Container(
+                            width: MediaQuery.of(context).size.width *
+                                0.25, // Ajusta este valor según necesites
+                            decoration: ResponsiveStyles.tableHeaderDecoration,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 20), // Ajuste conforme necessário
+                            child: Text('Series',
+                                textAlign: TextAlign.left,
+                                style: ResponsiveStyles.tableHeaderTextStyle(
+                                    context)),
+                          ),
+                        ),
                         DataColumn(
-                            label: Text('Séries',
-                                style:
-                                    ResponsiveStyles.tableTextStyle(context))),
-                        DataColumn(
-                            label: Text('Eventos',
-                                style:
-                                    ResponsiveStyles.tableTextStyle(context))),
-                      ],
-                      rows: viewModel.heroes
-                          .map<DataRow>((hero) => DataRow(cells: [
-                                DataCell(Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundImage:
-                                          NetworkImage(hero.imageUrl),
-                                      radius: 25,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                        child: Text(hero.name,
-                                            style:
-                                                ResponsiveStyles.tableTextStyle(
-                                                    context))),
-                                  ],
-                                )),
-                                DataCell(Text(hero.series.join(', '),
-                                    style: ResponsiveStyles.tableTextStyle(
-                                        context))),
-                                DataCell(Text(hero.events.join(', '),
-                                    style: ResponsiveStyles.tableTextStyle(
-                                        context))),
-                              ]))
-                          .toList(),
-                    ),
+                          label: Container(
+                            width: MediaQuery.of(context).size.width *
+                                0.50, // Ajusta este valor según necesites
+                            decoration: ResponsiveStyles.tableHeaderDecoration,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 20), // Ajuste conforme necessário
+                            child: Text('Eventos',
+                                textAlign: TextAlign.left,
+                                style: ResponsiveStyles.tableHeaderTextStyle(
+                                    context)),
+                          ),
+                        ),
+                      ]
+                    ],
+                    rows: viewModel.heroes
+                        .map<DataRow>((hero) => DataRow(cells: [
+                              DataCell(Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundImage:
+                                            NetworkImage(hero.imageUrl),
+                                        radius:
+                                            ResponsiveStyles.circleAvatarRadius,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                          child: Text(hero.name,
+                                              style: ResponsiveStyles
+                                                  .tableTextStyle(context))),
+                                    ],
+                                  ))),
+                              if (MediaQuery.of(context).size.width >= 600) ...[
+                                DataCell(Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: Text(hero.series.join(', '),
+                                        style: ResponsiveStyles.tableTextStyle(
+                                            context)))),
+                                DataCell(Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: Text(hero.events.join(', '),
+                                        style: ResponsiveStyles.tableTextStyle(
+                                            context)))),
+                              ]
+                            ]))
+                        .toList(),
                   ),
                 ),
                 PaginationControls(
